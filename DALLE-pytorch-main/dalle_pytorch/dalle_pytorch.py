@@ -89,14 +89,10 @@ class DiscreteVAE(nn.Module):
 
         enc_chans = [hidden_dim] * num_layers
         dec_chans = list(reversed(enc_chans))
-
         enc_chans = [channels, *enc_chans]
-
         dec_init_chan = codebook_dim if not has_resblocks else dec_chans[0]
         dec_chans = [dec_init_chan, *dec_chans]
-
         enc_chans_io, dec_chans_io = map(lambda t: list(zip(t[:-1], t[1:])), (enc_chans, dec_chans))
-
         enc_layers = []
         dec_layers = []
 

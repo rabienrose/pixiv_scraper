@@ -148,8 +148,6 @@ if __name__ == '__main__':
                         imginfos=imginfo_cache[key]
                         for item in imginfos:
                             imginfo_table.update_one({"id":item["id"]},{"$set":item},True)
-                            # if imginfo_table.count_documents({"id":item["id"]})==0:
-                            #     imginfo_table.insert_one(item)
                     follow_list.update_one({"id":x["id"]}, {"$set":{"download":download_ver,"last_create":create_data}})
                     print("last_create:",create_data)
                 else:

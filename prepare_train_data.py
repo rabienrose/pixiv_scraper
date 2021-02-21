@@ -29,7 +29,7 @@ mydb = myclient["pixiv"]
 auth = oss2.Auth(oss_config['accessKeyId'], oss_config['accessKeySecret'])
 bucket = oss2.Bucket(auth, oss_config['endpoint'], oss_config['bucket'])
 pp = pprint.PrettyPrinter(indent=1)
-img_size=512
+img_size=256
 def convert_img(img_file):
     probe = ffmpeg.probe(img_file)
     video_stream = probe["streams"][0]
@@ -56,7 +56,7 @@ def main():
     for img_table_name in mydb.list_collection_names():
         print(img_table_name)
         img_table=mydb[img_table_name]
-        for x in img_table.find({"status":{"$exists":False},"total_bookmarks":{"$gt":100}}):
+        for x in img_table.find({"status":2}):
             user_id=x["user_id"]
             create_date=x["create_date"]
             for item in x["imgfiles"]:
@@ -65,10 +65,10 @@ def main():
                     bucket.get_object_to_file(oss_img_path, item)
                     re =convert_img(item)
                     if re:
-                        bucket.put_object_from_file("train_imgs/"+item, "pad_"+item)
+                        bucket.put_object_from_file("train_imgs_256_all/"+item, "pad_"+item)
                         count=count+1
                         print(count,item)
-                        img_table.update_one({"id":x["id"]},{"$set":{"status":2}})
+                        img_table.update_one({"id":x["id"]},{"$set":{"status":3}})
                         os.remove("pad_"+item)
                     else:
                         img_table.update_one({"id":x["id"]},{"$set":{"status":-1}})
